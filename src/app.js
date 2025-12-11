@@ -2,18 +2,19 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/hello/2", (req, res) => {
+// it will work for /ac,/abc 
+app.get("/ab?c", (req, res) => {
   res.send('Hello hello! hgfhgf gfhgfhf');
 });
 
-//this will match all the HTTP methods (GET, POST, PUT, DELETE, etc.) for the /hello route
-app.use("/hello", (req, res) => {
-  res.send('Hello hello!');
+app.get("/ab+c", (req, res) => {
+  res.send('Hello hello! hgfhgf gfhgfhf');
+});
+app.get("/user/:userId/:name/:password", (req, res) => {
+    console.log(req.params);
+  res.send('Hello hello! hgfhgf gfhgfhf');
 });
 
-app.use("/", (req, res) => {
-  res.send('Hello World! 45');
-});
 
 
 app.listen(PORT, () => {
