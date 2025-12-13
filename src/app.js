@@ -12,23 +12,43 @@ app.post('/signup', (req, res) => {
   const userObj=req.body;
   // Create a new user instance and save it to the database
   const user = new User(userObj);
-  // const userObj={
-  //   firstName: "Virat",
-  //   lastName: "kolhi",
-  //   emailId: "jsaonh@gmail.com",
-  //   password: "johns@123",
-  //   age: 25,}
-  //   // Create a new user instance and save it to the database
-  //   const user = new User(userObj);
     user.save().then(() => {
       console.log("User saved successfully");
     }).catch((err) => {
       console.error("Error saving user:", err);
     });
-     res.send('user added sucessfully');
+     res.send('user added sucessfully jghgj');
 });
 
+// Get user by email
+app.get('/user', async (req, res) => {
+  const userEmail = req.body.emailId;
+  try {
+   const user = await User.findOne({ emailId: userEmail });
+   if (!user) {
+      return res.status(404).send("User not found");
+    } else {
+  res.send(user);}  
+  } catch (err) {
+    console.error("Error retrieving user:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }
+});
 
+// Feed API - Get all users 
+
+app.get('/feed', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (err) {
+    console.error("Error retrieving users:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }
+
+});
 // Connect to the database
 connectDB().then(() => {
   console.log("Database connected successfully");
