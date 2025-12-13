@@ -7,28 +7,32 @@ app.use(express.json());
 
 
 app.post('/signup', (req, res) => {
- 
-  console.log(req.body,"reqbody");
-  const userObj=req.body;
+
+  console.log(req.body, "reqbody");
+  const userObj = req.body;
   // Create a new user instance and save it to the database
   const user = new User(userObj);
-    user.save().then(() => {
-      console.log("User saved successfully");
-    }).catch((err) => {
-      console.error("Error saving user:", err);
-    });
-     res.send('user added sucessfully jghgj');
+  user.save().then(() => {
+    console.log("User saved successfully");
+  }).catch((err) => {
+    console.error("Error saving user:", err);
+  });
+  res.send('user added sucessfully jghgj');
 });
 
 // Get user by email
 app.get('/user', async (req, res) => {
-  const userEmail = req.body.emailId;
+  const userEmail = req.body?.emailId;
+  if (!userEmail) {
+    return res.status(400).send("EmailId is required");
+  }
   try {
-   const user = await User.findOne({ emailId: userEmail });
-   if (!user) {
+    const user = await User.findOne({ emailId: userEmail });
+    if (!user) {
       return res.status(404).send("User not found");
     } else {
-  res.send(user);}  
+      res.send(user);
+    }
   } catch (err) {
     console.error("Error retrieving user:", err);
     res.status(500).send("something went wrong");
@@ -49,6 +53,44 @@ app.get('/feed', async (req, res) => {
   }
 
 });
+
+app.delete('/user', async (req, res) => {
+  const userId = req.body.userId;
+
+  console.log("Deleting user with ID:", userId);
+  try {
+    const result = await User.findByIdAndDelete(userId);
+    if (!result) {
+      return res.status(404).send("User not found");
+    } else {
+      res.send("User deleted successfully");
+    }
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }
+});
+
+app.patch('/user', async (req, res) => {
+  const userId = req.body.userId;
+
+  console.log("Updating user with ID:", userId);
+  try {
+    const result = await User.findByIdAndUpdate(userId, req.body, { returnDocument: 'after' });
+    console.log(result);
+    if (!result) {
+      return res.status(404).send("User not found");
+    } else {
+      res.send("User updated successfully");
+    }
+  } catch (err) {
+    console.error("Error updating user:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }
+});
+
 // Connect to the database
 connectDB().then(() => {
   console.log("Database connected successfully");
