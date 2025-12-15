@@ -59,7 +59,7 @@ app.post('/login', async (req, res) => {
         return res.status(401).send("Invalid password");
       } else {
         //create a JWT token and send it to the user
-        const token = await jwt.sign({ _id: user._id }, "DEV@123")
+        const token = await jwt.sign({ _id: user._id }, "DEV@123", { expiresIn: '1d' });
         console.log("Generated JWT Token:", token);
 
         //Add the token to cookie and send the response back to the user
@@ -88,6 +88,11 @@ app.get('/profile', userAuth, async (req, res) => {
     res.status(500).send("something went wrong");
     return;
   }
+});
+
+app.post('/sendConnectRequest', userAuth, async (req, res) => {
+  const requestingUser = req.user;  
+  res.send("Connect request was send by " + requestingUser.firstName);
 });
 // Get user by email
 app.get('/user', async (req, res) => {
