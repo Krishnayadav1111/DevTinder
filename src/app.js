@@ -38,6 +38,32 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+// login API
+app.post('/login', async (req, res) => {
+  const { emailId, password } = req.body;
+  //sanitize the the mailId and password inputs
+  if (!emailId || !password) {
+    return res.status(400).send("EmailId and password are required");
+  }
+  try {
+    const user = await User.findOne({ emailId });
+    if (!user) {
+      return res.status(404).send("Invalide credentials");
+    } else {
+      const isPasswordMatch = await bcrypt.compare(password, user.password);  
+      if (!isPasswordMatch) {
+        return res.status(401).send("Invalid password");
+      } else {
+        res.send("Login successful");
+      }
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }    
+});
+
 // Get user by email
 app.get('/user', async (req, res) => {
   const userEmail = req.body?.emailId;
