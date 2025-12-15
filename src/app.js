@@ -54,12 +54,12 @@ app.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).send("Invalide credentials");
     } else {
-      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      const isPasswordMatch = await user.validatePassword(password);
       if (!isPasswordMatch) {
         return res.status(401).send("Invalid password");
       } else {
         //create a JWT token and send it to the user
-        const token = await jwt.sign({ _id: user._id }, "DEV@123", { expiresIn: '1d' });
+        const token = await user.getJWT();
         console.log("Generated JWT Token:", token);
 
         //Add the token to cookie and send the response back to the user
