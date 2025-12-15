@@ -6,18 +6,19 @@ const User = require('./models/user');
 app.use(express.json());
 
 
-app.post('/signup', (req, res) => {
-
+app.post('/signup', async (req, res) => {
   console.log(req.body, "reqbody");
   const userObj = req.body;
   // Create a new user instance and save it to the database
   const user = new User(userObj);
-  user.save().then(() => {
+  try {
+    await user.save();
     console.log("User saved successfully");
-  }).catch((err) => {
+    res.send('User added successfully');
+  } catch (err) {
     console.error("Error saving user:", err);
-  });
-  res.send('user added sucessfully jghgj');
+    res.status(400).send("Error saving user: " + err.message);
+  }
 });
 
 // Get user by email
@@ -72,12 +73,21 @@ app.delete('/user', async (req, res) => {
   }
 });
 
-app.patch('/user', async (req, res) => {
-  const userId = req.body.userId;
+app.patch('/user/:userId', async (req, res) => {
+  const userId = req.params?.userId;
+  const data = req.body;
 
   console.log("Updating user with ID:", userId);
   try {
-    const result = await User.findByIdAndUpdate(userId, req.body, { returnDocument: 'after' });
+    const ALLOWED_UPDATES = ["photoUrl", "about", "gender", "age", "skills"];
+    const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k))
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    if(data.skills.length > 10){
+      throw new Error("skill cannot be more than 10")
+    }
+    const result = await User.findByIdAndUpdate(userId, req.body, { returnDocument: 'after', runValidators: true });
     console.log(result);
     if (!result) {
       return res.status(404).send("User not found");
@@ -85,8 +95,9 @@ app.patch('/user', async (req, res) => {
       res.send("User updated successfully");
     }
   } catch (err) {
+    console.log(err, "test")
     console.error("Error updating user:", err);
-    res.status(500).send("something went wrong");
+    res.status(400).send("Update failed:" + err.message);
     return;
   }
 });
