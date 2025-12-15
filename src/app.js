@@ -7,6 +7,7 @@ const { validateSignUpData } = require('./utils/validation');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
+const { userAuth } = require('./middlewares/auth');
 
 app.use(cookieParser());
 app.use(express.json());
@@ -77,26 +78,11 @@ app.post('/login', async (req, res) => {
 
 //profile API
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', userAuth, async (req, res) => {
 
   try {
-  const cookies = req.cookies;
-  const { token } = cookies;
-if (!token) {
-    return res.status(401).send("Unauthorized: No token provided");
-  }
-  const decodedMessage = jwt.verify(token, "DEV@123");
-  console.log("Decoded JWT Message:", decodedMessage);
-  const { _id} = decodedMessage;
-  console.log("User ID from token:", _id);
-  // validate my token
-const user = await User.findById(_id);
-if (!user) {
-    return res.status(404).send("User not found");
-  }
-
-  //verify the token from the cookie and get the user details from the token
-  res.send(user);
+    const user = req.user;
+    res.send(user);
   } catch (err) {
     console.error("Error retrieving profile:", err);
     res.status(500).send("something went wrong");
