@@ -5,7 +5,10 @@ const connectDB = require('./config/database');
 const User = require('./models/user');
 const { validateSignUpData } = require('./utils/validation');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
 
+app.use(cookieParser());
 app.use(express.json());
 
 
@@ -14,7 +17,7 @@ app.post('/signup', async (req, res) => {
   const userObj = req.body;
   // Validate the incoming data
   validateSignUpData(req);
-  const passwordHash = await bcrypt.hash(userObj.password, 10); 
+  const passwordHash = await bcrypt.hash(userObj.password, 10);
   console.log(passwordHash, "passwordHash");
   // Create a new user instance and save it to the database
   const user = new User({
@@ -50,10 +53,18 @@ app.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).send("Invalide credentials");
     } else {
-      const isPasswordMatch = await bcrypt.compare(password, user.password);  
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
       if (!isPasswordMatch) {
         return res.status(401).send("Invalid password");
       } else {
+        //create a JWT token and send it to the user
+        const token = await jwt.sign({ _id: user._id }, "DEV@123")
+        console.log("Generated JWT Token:", token);
+
+        //Add the token to cookie and send the response back to the user
+
+        res.cookie('token', token);
+
         res.send("Login successful");
       }
     }
@@ -61,9 +72,37 @@ app.post('/login', async (req, res) => {
     console.error("Error during login:", err);
     res.status(500).send("something went wrong");
     return;
-  }    
+  }
 });
 
+//profile API
+
+app.get('/profile', async (req, res) => {
+
+  try {
+  const cookies = req.cookies;
+  const { token } = cookies;
+if (!token) {
+    return res.status(401).send("Unauthorized: No token provided");
+  }
+  const decodedMessage = jwt.verify(token, "DEV@123");
+  console.log("Decoded JWT Message:", decodedMessage);
+  const { _id} = decodedMessage;
+  console.log("User ID from token:", _id);
+  // validate my token
+const user = await User.findById(_id);
+if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  //verify the token from the cookie and get the user details from the token
+  res.send(user);
+  } catch (err) {
+    console.error("Error retrieving profile:", err);
+    res.status(500).send("something went wrong");
+    return;
+  }
+});
 // Get user by email
 app.get('/user', async (req, res) => {
   const userEmail = req.body?.emailId;
@@ -127,7 +166,7 @@ app.patch('/user/:userId', async (req, res) => {
     if (!isUpdateAllowed) {
       throw new Error("Update not allowed");
     }
-    if(data.skills.length > 10){
+    if (data.skills.length > 10) {
       throw new Error("skill cannot be more than 10")
     }
     const result = await User.findByIdAndUpdate(userId, req.body, { returnDocument: 'after', runValidators: true });
