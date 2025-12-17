@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema({
     firstName: {
         type: String,
         required: true,
+        index: true,
         minLenght: 4,
         maxLenght: 100
     },
@@ -66,6 +67,7 @@ const userSchema = mongoose.Schema({
 }, { timestamps: true, });
 
 
+userSchema.index({ firstName: 1, lastName: 1, about: 1, skills: 1 });
 
 userSchema.methods.getJWT = async function() {
     const jwt = require('jsonwebtoken');
