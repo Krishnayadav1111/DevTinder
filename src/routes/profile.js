@@ -8,10 +8,10 @@ profileRouter.get('/profile/view', userAuth, async (req, res) => {
 
     try {
         const user = req.user;
-        res.send(user);
+        res.json({ message: "Profile retrieved successfully", success:true, data: user });
     } catch (err) {
         console.error("Error retrieving profile:", err);
-        res.status(500).send("something went wrong");
+        res.json({ message: "something went wrong", success:false });
         return;
     }
 });
@@ -42,7 +42,6 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
 profileRouter.patch('/profile/changePassword', userAuth, async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
-        console.log("Password change request body:", req.body);
         if (!oldPassword || !newPassword) {
             return res.status(400).send("Old password and new password are required");
         }
