@@ -11,7 +11,6 @@ authRouter.post('/signup', async (req, res) => {
   // Validate the incoming data
   validateSignUpData(req);
   const passwordHash = await bcrypt.hash(userObj.password, 10);
-  console.log(passwordHash, "passwordHash");
   // Create a new user instance and save it to the database
   const user = new User({
     firstName: userObj.firstName,
@@ -26,8 +25,13 @@ authRouter.post('/signup', async (req, res) => {
   });
   try {
     await user.save();
-    console.log("User saved successfully");
-    res.send('User added successfully');
+     const token = await user.getJWT();
+
+        //Add the token to cookie and send the response back to the user
+
+        res.cookie('token', token);
+
+        res.send( {message:"Signup successful",data:user, token: token} );
   } catch (err) {
     console.error("Error saving user:", err);
     res.status(400).send("Error saving user: " + err.message);
@@ -52,7 +56,6 @@ authRouter.post('/login', async (req, res) => {
       } else {
         //create a JWT token and send it to the user
         const token = await user.getJWT();
-        console.log("Generated JWT Token:", token);
 
         //Add the token to cookie and send the response back to the user
 
@@ -70,7 +73,7 @@ authRouter.post('/login', async (req, res) => {
 
 authRouter.post('/logout', (req, res) => {
   res.clearCookie('token');
-  res.send("Logout successful");
+  res.send({ message: 'Logout successful' ,data:null, token: null});
 });
 
 module.exports = authRouter;
