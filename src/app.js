@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const connectDB = require('./config/database');
 const User = require('./models/user');
 const { validateSignUpData } = require('./utils/validation');
