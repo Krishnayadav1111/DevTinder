@@ -1,4 +1,4 @@
-name: Deploy Backend to EC2
+name: Deploy DevTinder Backend
 
 on:
   push:
@@ -20,12 +20,12 @@ jobs:
             set -e
             echo "🚀 Deploying Backend"
 
-            cd /var/www/backend
+            cd ~/DevTinder
 
             git pull origin master
-            npm install --production
+            npm install
 
-            pm2 restart backend || pm2 start index.js --name backend
+            pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
 
             pm2 save
-            echo "✅ Backend deployed successfully"
+            echo "✅ Backend deployed"
