@@ -17,21 +17,26 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            set -e
-            echo "🚀 Deploying Backend"
+            bash -lc '
+              set -e
+              echo "🚀 Deploying Backend"
 
-            # Load nvm explicitly
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+              echo "👉 Who am I?"
+              whoami
+              echo "👉 Home:"
+              echo $HOME
 
-            node -v
-            npm -v
+              echo "👉 Node & npm check"
+              node -v
+              npm -v
+              pm2 -v
 
-            cd ~/DevTinder
-            git pull origin master
-            npm install
+              cd ~/DevTinder
+              git pull origin master
+              npm install
 
-            pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
-            pm2 save
+              pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
+              pm2 save
 
-            echo "✅ Backend deployed successfully"
+              echo "✅ Backend deployed successfully"
+            '
