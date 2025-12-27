@@ -30,7 +30,6 @@ app.use('/', profileRouter);
 app.use('/', requestRouter);
 app.use('/', userRouter);
 
-console.log("App initialized");
 // // Get user by email
 // app.get('/user', async (req, res) => {
 //   const userEmail = req.body?.emailId;
