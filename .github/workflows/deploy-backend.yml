@@ -26,6 +26,6 @@ jobs:
             npm install
 
             pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
-
             pm2 save
-            echo "✅ Backend deployed"
+
+            echo "✅ Backend deployed successfully"
