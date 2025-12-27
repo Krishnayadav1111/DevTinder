@@ -21,7 +21,6 @@ jobs:
             echo "🚀 Deploying Backend"
 
             cd ~/DevTinder
-
             git pull origin master
             npm install
 
