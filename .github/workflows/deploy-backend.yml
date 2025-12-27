@@ -3,7 +3,7 @@ name: Deploy DevTinder Backend
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   deploy-backend:
@@ -22,10 +22,10 @@ jobs:
 
             cd ~/DevTinder
 
-            git pull origin master
+            git pull origin dev
             npm install
 
             pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
-
             pm2 save
-            echo "✅ Backend deployed"
+
+            echo "✅ Backend deployed successfully"
