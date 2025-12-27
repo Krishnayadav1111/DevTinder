@@ -20,6 +20,7 @@ const connectionRequestSchema = new mongoose.Schema({
     timestamps: true
 
 });
+// Ensure a user cannot send multiple requests to the same user
 
 connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 }, { unique: true });
 
