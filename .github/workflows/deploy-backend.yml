@@ -19,24 +19,39 @@ jobs:
           script: |
             bash -lc '
               set -e
+              set -o pipefail
+              
               echo "🚀 Deploying Backend"
-
-              echo "👉 Who am I?"
               whoami
-              echo "👉 Home:"
-              echo $HOME
-
+              echo "📍 Home: $HOME"
+              
+              # Save current commit for rollback
+              cd ~/DevTinder
+              PREVIOUS_COMMIT=$(git rev-parse HEAD)
+              
               echo "👉 Node & npm check"
               node -v
               npm -v
               pm2 -v
-
-              cd ~/DevTinder
-              git pull origin master
-              npm install
-
-              pm2 restart DevTinder || pm2 start npm --name DevTinder -- start
+              
+              echo "📥 Pulling latest code..."
+              git pull origin master || { echo "❌ Git pull failed"; exit 1; }
+              
+              echo "📦 Installing dependencies..."
+              npm install --production || { echo "❌ npm install failed"; exit 1; }
+              
+              echo "🔄 Restarting application..."
+              pm2 delete DevTinder 2>/dev/null || true
+              pm2 start npm --name DevTinder -- start
               pm2 save
-
+              
+              # Health check
+              sleep 2
+              if ! pm2 info DevTinder | grep -q "online"; then
+                echo "❌ Application failed to start"
+                git checkout $PREVIOUS_COMMIT
+                exit 1
+              fi
+              
               echo "✅ Backend deployed successfully"
             '
