@@ -32,6 +32,8 @@ jobs:
               echo " Node & npm check"
               node -v
               npm -v
+              echo " Installing pm2..."
+              npm install -g pm2
               pm2 -v
               
               echo " Pulling latest code..."
