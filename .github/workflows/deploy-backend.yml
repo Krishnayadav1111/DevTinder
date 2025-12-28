@@ -37,6 +37,7 @@ jobs:
               pm2 -v
               
               echo " Pulling latest code..."
+              git reset --hard HEAD
               git pull origin master || { echo " Git pull failed"; exit 1; }
               
               echo " Installing dependencies..."
