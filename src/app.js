@@ -30,7 +30,7 @@ app.use('/', profileRouter);
 app.use('/', requestRouter);
 app.use('/', userRouter);
 
-// // Sign Up API
+
 
 // // Get user by email
 // app.get('/user', async (req, res) => {
