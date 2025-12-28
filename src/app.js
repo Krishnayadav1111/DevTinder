@@ -32,7 +32,7 @@ app.use('/', userRouter);
 
 
 
-console.log("CI/CD working 🚀");
+console.log("CI/CD working hfhg🚀");
 
 // app.get('/user', async (req, res) => {
 //   const userEmail = req.body?.emailId;
