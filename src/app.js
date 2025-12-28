@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
 const { userAuth } = require('./middlewares/auth');
 const cors = require('cors');
-
+//gfhghf
 app.use(cookieParser());
 app.use(express.json());
 
@@ -22,8 +22,8 @@ const requestRouter = require('./routes/request');
 const userRouter = require('./routes/user');
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
+  origin: 'http://localhost:5173',
+  credentials: true
 }))
 app.use('/', authRouter);
 app.use('/', profileRouter);
