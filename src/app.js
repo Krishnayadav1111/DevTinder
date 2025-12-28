@@ -32,7 +32,8 @@ app.use('/', userRouter);
 
 
 
-// // Get user by email
+console.log("CI/CD working 🚀");
+
 // app.get('/user', async (req, res) => {
 //   const userEmail = req.body?.emailId;
 //   if (!userEmail) {
