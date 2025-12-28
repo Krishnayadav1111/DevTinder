@@ -4,7 +4,7 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const { validateSignUpData } = require('../utils/validation');
 
-// Sign-up route ygh
+// Sign
 authRouter.post('/signup', async (req, res) => {
   console.log(req.body, "reqbody");
   const userObj = req.body;
