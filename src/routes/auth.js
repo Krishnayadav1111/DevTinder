@@ -4,7 +4,7 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const { validateSignUpData } = require('../utils/validation');
 
-// Sign-up route
+// Sign-up route ygh
 authRouter.post('/signup', async (req, res) => {
   console.log(req.body, "reqbody");
   const userObj = req.body;
@@ -25,13 +25,13 @@ authRouter.post('/signup', async (req, res) => {
   });
   try {
     await user.save();
-     const token = await user.getJWT();
+    const token = await user.getJWT();
 
-        //Add the token to cookie and send the response back to the user
+    //Add the token to cookie and send the response back to the user
 
-        res.cookie('token', token);
+    res.cookie('token', token);
 
-        res.send( {message:"Signup successful",data:user, token: token} );
+    res.send({ message: "Signup successful", data: user, token: token });
   } catch (err) {
     console.error("Error saving user:", err);
     res.status(400).send("Error saving user: " + err.message);
@@ -61,7 +61,7 @@ authRouter.post('/login', async (req, res) => {
 
         res.cookie('token', token);
 
-        res.send( {message:"Login successful",data:user, token: token} );
+        res.send({ message: "Login successful", data: user, token: token });
       }
     }
   } catch (err) {
@@ -73,7 +73,7 @@ authRouter.post('/login', async (req, res) => {
 
 authRouter.post('/logout', (req, res) => {
   res.clearCookie('token');
-  res.send({ message: 'Logout successful' ,data:null, token: null});
+  res.send({ message: 'Logout successful', data: null, token: null });
 });
 
 module.exports = authRouter;
